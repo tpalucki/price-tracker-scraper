@@ -5,8 +5,12 @@ import {Browser, Page} from "puppeteer";
 const app = express();
 const port = 3000;
 
-app.get('/', (req, res) => {
-    res.send('Hello World!');
+app.get('/health', (req, res) => {
+    res.send('{status: "UP"}');
+});
+
+app.get('/screenshots', (req, res) => {
+    res.send('Done!');
 });
 
 app.listen(port, () => {
