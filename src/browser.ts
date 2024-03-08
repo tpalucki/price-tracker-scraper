@@ -1,4 +1,8 @@
-import puppeteer, {Browser} from "puppeteer";
+import {Browser} from "puppeteer";
+import puppeteer from "puppeteer-extra";
+import StealthPlugin from 'puppeteer-extra-plugin-stealth';
+
+puppeteer.use(StealthPlugin());
 
 const startBrowser = async (): Promise<Browser> => {
     let browser: Browser;

@@ -10,6 +10,12 @@ app.get('/health', (req, res) => {
 });
 
 app.get('/screenshots', (req, res) => {
+    startBrowser().then(async browser => {
+        const page = await browser.newPage();
+        await page.goto('https://promoklocki.pl');
+        await page.screenshot({path: 'example.png'});
+        await browser.close();
+    })
     res.send('Done!');
 });
 
@@ -23,25 +29,31 @@ const browser: Promise<Browser> = startBrowser();
 const scraperController = (browser: Promise<Browser>) => {
     browser.then(async browser => {
         const page: Page = await browser.newPage();
-        await page.goto('https://promoklocki.pl');
+        await page.goto('https://promoklocki.pl/?p=1');
         // wait for DOM to load
         await page.waitForSelector('.main');
-        // wait for link to required legos
-        // await page.$$eval('.product', (products) => {
-        //     products.map((product) => {
-        //         console.log('Product: {}', product);
-        //         const title = product.querySelector('.product > h2').textContent;
-        //         const price = product.querySelector('.product > strong').textContent;
-        //         console.log(title, price);
-        //     });
-        // });
-        await page.$$eval('.product', (products) => {
-            console.log('Products: {}', products);
+        await page.$$eval('.row.product', (products) => {
+            // console.log('Products: {}', products);
+            products.map((product) => {
+                const imageUrl = product.querySelector('div > a > img')?.getAttribute('src');
+                const title = product.querySelector('div > a > h2')?.textContent;
+                const price = product.querySelector('div > a > strong')?.textContent;
+                console.log('Image URL: ', imageUrl, " Title: ", title, " Price: ", price);
+            });
         });
 
-        await page.screenshot({path: 'example.png'});
-        // await page.close();
-        await browser.close();
+        // page.click(".pagination .page-item.active");
+        await page.goto('https://promoklocki.pl/?p=2');
+        await page.waitForSelector('.main');
+        await page.$$eval('.row.product', (products) => {
+            // console.log('Products: {}', products);
+            products.map((product) => {
+                const imageUrl = product.querySelector('div > a > img')?.getAttribute('src');
+                const title = product.querySelector('div > a > h2')?.textContent;
+                const price = product.querySelector('div > a > strong')?.textContent;
+                console.log('Image URL: ', imageUrl, " Title: ", title, " Price: ", price);
+            });
+        });
     });
 };
 
